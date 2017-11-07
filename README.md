@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmithro%2Fyosys.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmithro%2Fyosys?ref=badge_shield)
+
 ```
 yosys -- Yosys Open SYnthesis Suite
 
@@ -461,3 +463,7 @@ Notes:
 - To run `make manual` you need to have installed yosys with `make install`,
   otherwise it will fail on finding `kernel/yosys.h` while building
   `PRESENTATION_Prog`.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmithro%2Fyosys.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmithro%2Fyosys?ref=badge_large)
