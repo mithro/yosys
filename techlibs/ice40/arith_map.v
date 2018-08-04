@@ -40,15 +40,21 @@ module _80_ice40_alu (A, B, CI, BI, X, Y, CO);
 
 	wire [Y_WIDTH-1:0] AA = A_buf;
 	wire [Y_WIDTH-1:0] BB = BI ? ~B_buf : B_buf;
-	wire [Y_WIDTH-1:0] C = {CO, CI};
+
+	wire [Y_WIDTH-1:0] COUT;
+	wire [Y_WIDTH-1:0] LOUT = CO;
+
+	wire [Y_WIDTH-1:0] LIN = {LOUT, CI};
+	wire [Y_WIDTH-1:0] CIN = {COUT, CI};
 
 	genvar i;
 	generate for (i = 0; i < Y_WIDTH; i = i + 1) begin:slice
 		SB_CARRY carry (
 			.I0(AA[i]),
 			.I1(BB[i]),
-			.CI(C[i]),
-			.CO(CO[i])
+			.CI(CIN[i]),
+			.CO(COUT[i]),
+			.LO(LOUT[i])
 		);
 		SB_LUT4 #(
 			//         I0: 1010 1010 1010 1010
@@ -60,7 +66,7 @@ module _80_ice40_alu (A, B, CI, BI, X, Y, CO);
 			.I0(1'b0),
 			.I1(AA[i]),
 			.I2(BB[i]),
-			.I3(C[i]),
+			.I3(LIN[i]),
 			.O(Y[i])
 		);
 	end endgenerate

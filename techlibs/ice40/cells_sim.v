@@ -126,8 +126,9 @@ module SB_LUT4 (output O, input I0, I1, I2, I3);
 	assign O = I0 ? s1[1] : s1[0];
 endmodule
 
-module SB_CARRY (output CO, input I0, I1, CI);
+module SB_CARRY (output CO, output LO, input I0, I1, CI);
 	assign CO = (I0 && I1) || ((I0 || I1) && CI);
+	assign LO = CO;
 endmodule
 
 // Positive Edge SiliconBlue FF Cells
