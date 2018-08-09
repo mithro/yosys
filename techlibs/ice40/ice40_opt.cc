@@ -46,15 +46,14 @@ static void run_ice40_opts(Module *module, bool unlut_mode)
 			sb_lut_cells.push_back(cell);
 			continue;
 		}
-
-		if (cell->type == "\\SB_CARRY")
+		if (cell->type == "\\ICESTORM_CARRY_LUT")
 		{
 			SigSpec non_const_inputs, replacement_output;
 			int count_zeros = 0, count_ones = 0;
 
 			SigBit inbit[3] = {
-				get_bit_or_zero(cell->getPort("\\I0")),
 				get_bit_or_zero(cell->getPort("\\I1")),
+				get_bit_or_zero(cell->getPort("\\I2")),
 				get_bit_or_zero(cell->getPort("\\CI"))
 			};
 			for (int i = 0; i < 3; i++)
@@ -65,14 +64,14 @@ static void run_ice40_opts(Module *module, bool unlut_mode)
 						count_zeros++;
 				} else
 					non_const_inputs.append(inbit[i]);
-
+/*
 			if (count_zeros >= 2)
 				replacement_output = State::S0;
 			else if (count_ones >= 2)
 				replacement_output = State::S1;
 			else if (GetSize(non_const_inputs) == 1)
 				replacement_output = non_const_inputs;
-
+*/
 			if (GetSize(replacement_output)) {
 				optimized_co.insert(sigmap(cell->getPort("\\CO")[0]));
 				module->connect(cell->getPort("\\CO")[0], replacement_output);

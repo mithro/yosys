@@ -41,33 +41,39 @@ module _80_ice40_alu (A, B, CI, BI, X, Y, CO);
 	wire [Y_WIDTH-1:0] AA = A_buf;
 	wire [Y_WIDTH-1:0] BB = BI ? ~B_buf : B_buf;
 
-	wire [Y_WIDTH-1:0] COUT;
-	wire [Y_WIDTH-1:0] LOUT = CO;
+	wire C0;
+	ICESTORM_CARRY_LUT #(
+		//         I0: 1010 1010 1010 1010
+		//         I1: 1100 1100 1100 1100
+		//         I2: 1111 0000 1111 0000
+		//         I3: 1111 1111 0000 0000
+		.LUT_INIT(16'b 0110_1001_1001_0110)
+	) lut_carry0 (
+		.CI(),
+		.I0(1'b0),
+		.I1(CI),
+		.I2(CI),
+		.LO(),
+		.CO(C0)
+	);
 
-	wire [Y_WIDTH-1:0] LIN = {LOUT, CI};
-	wire [Y_WIDTH-1:0] CIN = {COUT, CI};
+	wire [Y_WIDTH-1:0] C = {CO, C0};
 
 	genvar i;
 	generate for (i = 0; i < Y_WIDTH; i = i + 1) begin:slice
-		SB_CARRY carry (
-			.I0(AA[i]),
-			.I1(BB[i]),
-			.CI(CIN[i]),
-			.CO(COUT[i]),
-			.LO(LOUT[i])
-		);
-		SB_LUT4 #(
+		ICESTORM_CARRY_LUT #(
 			//         I0: 1010 1010 1010 1010
 			//         I1: 1100 1100 1100 1100
 			//         I2: 1111 0000 1111 0000
 			//         I3: 1111 1111 0000 0000
 			.LUT_INIT(16'b 0110_1001_1001_0110)
-		) adder (
+		) lut_carry (
+			.CI(C[i]),
 			.I0(1'b0),
 			.I1(AA[i]),
 			.I2(BB[i]),
-			.I3(LIN[i]),
-			.O(Y[i])
+			.LO(Y[i]),
+			.CO(CO[i])
 		);
 	end endgenerate
 

@@ -126,9 +126,15 @@ module SB_LUT4 (output O, input I0, I1, I2, I3);
 	assign O = I0 ? s1[1] : s1[0];
 endmodule
 
-module SB_CARRY (output CO, output LO, input I0, I1, CI);
-	assign CO = (I0 && I1) || ((I0 || I1) && CI);
-	assign LO = CO;
+module ICESTORM_CARRY_LUT (output CO, LO, input I0, I1, I2, CI);
+	// SB_LUT4 part
+	parameter [15:0] LUT_INIT = 0;
+	wire [7:0] s3 = CI ? LUT_INIT[15:8] : LUT_INIT[7:0];
+	wire [3:0] s2 = I2 ?       s3[ 7:4] :       s3[3:0];
+	wire [1:0] s1 = I1 ?       s2[ 3:2] :       s2[1:0];
+	assign LO = I0 ? s1[1] : s1[0];
+	// SB_CARRY part -- Check name translations
+	assign CO = (I1 && I2) || ((I1 || I2) && CI);
 endmodule
 
 // Positive Edge SiliconBlue FF Cells
