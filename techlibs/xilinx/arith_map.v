@@ -49,6 +49,8 @@ module _80_xilinx_alu (A, B, CI, BI, X, Y, CO);
 	parameter A_WIDTH = 1;
 	parameter B_WIDTH = 1;
 	parameter Y_WIDTH = 1;
+	parameter _TECHMAP_CONSTVAL_CI_ = 0;
+	parameter _TECHMAP_CONSTMSK_CI_ = 0;
 
 	input [A_WIDTH-1:0] A;
 	input [B_WIDTH-1:0] B;
@@ -68,8 +70,30 @@ module _80_xilinx_alu (A, B, CI, BI, X, Y, CO);
 
 	wire [Y_WIDTH-1:0] P = AA ^ BB;
 	wire [Y_WIDTH-1:0] G = AA & BB;
-	wire [Y_WIDTH-1:0] C = {CO, CI};
 	wire [Y_WIDTH-1:0] S = P & ~G;
+
+`ifndef _EXPLICIT_CARRY
+	wire [Y_WIDTH-1:0] C = {CO, CI};
+`else
+	wire CINIT;
+	wire [Y_WIDTH-1:0] C = {CO, CINIT};
+
+	// If carry chain is being initialized to a constant, techmap the constant
+	// source.  Otherwise techmap the fabric source.
+	if(_TECHMAP_CONSTMSK_CI_ === 1) begin
+		if(_TECHMAP_CONSTVAL_CI_ === 1) begin
+				CYINIT_CONSTANTS cyinit_const(.C1(CINIT));
+			end
+		else
+			begin
+					CYINIT_CONSTANTS cyinit_const(.C0(CINIT));
+			end
+		end
+	else
+		begin
+			CYINIT_FABRIC cyinit_const(.CI_FABRIC(CI), .CI_CHAIN(CINIT));
+		end
+`endif
 
 	genvar i;
 	generate for (i = 0; i < Y_WIDTH; i = i + 1) begin:slice
