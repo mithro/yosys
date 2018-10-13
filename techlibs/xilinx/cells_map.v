@@ -30,26 +30,45 @@ module \$lut (A, Y);
     end else
     if (WIDTH == 2) begin
       LUT2 #(.INIT(LUT)) _TECHMAP_REPLACE_ (.O(Y),
-        .I0(A[0]), .I1(A[1]));
+        .I0(A[0]),
+	.I1(A[1]));
     end else
     if (WIDTH == 3) begin
       LUT3 #(.INIT(LUT)) _TECHMAP_REPLACE_ (.O(Y),
-        .I0(A[0]), .I1(A[1]), .I2(A[2]));
+        .I0(A[0]),
+	.I1(A[1]),
+	.I2(A[2]));
     end else
     if (WIDTH == 4) begin
       LUT4 #(.INIT(LUT)) _TECHMAP_REPLACE_ (.O(Y),
-        .I0(A[0]), .I1(A[1]), .I2(A[2]),
+        .I0(A[0]),
+	.I1(A[1]),
+	.I2(A[2]),
         .I3(A[3]));
     end else
     if (WIDTH == 5) begin
       LUT5 #(.INIT(LUT)) _TECHMAP_REPLACE_ (.O(Y),
-        .I0(A[0]), .I1(A[1]), .I2(A[2]),
-        .I3(A[3]), .I4(A[4]));
+        .I0(A[0]),
+	.I1(A[1]),
+	.I2(A[2]),
+        .I3(A[3]),
+	.I4(A[4]));
     end else
     if (WIDTH == 6) begin
-      LUT6 #(.INIT(LUT)) _TECHMAP_REPLACE_ (.O(Y),
-        .I0(A[0]), .I1(A[1]), .I2(A[2]),
-        .I3(A[3]), .I4(A[4]), .I5(A[5]));
+      wire T0, T1;
+      LUT5 #(.INIT(LUT[63:0])) fpga_lut_0 (.O(T0),
+        .I0(A[0]),
+	.I1(A[1]),
+	.I2(A[2]),
+        .I3(A[3]),
+	.I4(A[4]));
+      LUT5 #(.INIT(LUT[127:64])) fpga_lut_1 (.O(T1),
+        .I0(A[0]),
+	.I1(A[1]),
+	.I2(A[2]),
+        .I3(A[3]),
+	.I4(A[4]));
+      MUXF6 fpga_mux_0 (.O(Y), .I0(T0), .I1(T1), .S(A[5]));
     end else
     if (WIDTH == 7) begin
       wire T0, T1;
