@@ -84,6 +84,10 @@ module MUXCY(output O, input CI, DI, S);
   assign O = S ? CI : DI;
 endmodule
 
+module MUXF6(output O, input I0, I1, S);
+  assign O = S ? I1 : I0;
+endmodule
+
 module MUXF7(output O, input I0, I1, S);
   assign O = S ? I1 : I0;
 endmodule
