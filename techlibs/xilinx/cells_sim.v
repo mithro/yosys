@@ -181,6 +181,7 @@ module FDPE (output reg Q, input C, CE, D, PRE);
   endcase endgenerate
 endmodule
 
+/*
 module RAM64X1D (
   output DPO, SPO,
   input  D, WCLK, WE,
@@ -196,6 +197,20 @@ module RAM64X1D (
   assign DPO = mem[dpra];
   wire clk = WCLK ^ IS_WCLK_INVERTED;
   always @(posedge clk) if (WE) mem[a] <= D;
+endmodule
+*/
+module RAM64X1D (
+  output       DPO, SPO,
+  input        D, WCLK, WE,
+  input  [5:0] A, DPRA
+);
+  parameter INIT = 64'h0;
+  parameter IS_WCLK_INVERTED = 1'b0;
+  reg [63:0] mem = INIT;
+  assign SPO = mem[A];
+  assign DPO = mem[DPRA];
+  wire clk = WCLK ^ IS_WCLK_INVERTED;
+  always @(posedge clk) if (WE) mem[A] <= D;
 endmodule
 
 module RAM128X1D (
